@@ -52,32 +52,37 @@ public class CustomerServiceImpl implements CustomerService {
 	public TripBooking bookTrip(int customerId, String fromLocation, String toLocation, int distanceInKm) throws Exception{
 		//Book the driver with lowest driverId who is free (cab available variable is Boolean.TRUE). If no driver is available, throw "No cab available!" exception
 		//Avoid using SQL query
-		Customer customer = customerRepository2.findById(customerId).get();
-		List<Driver> driverList = driverRepository2.findAll();
-		for(Driver driver : driverList){
-			if (driver.getCab().getAvailable()){
-				TripBooking tripBooking = new TripBooking();
-				tripBooking.setDriver(driver);
-				tripBooking.setCustomer(customer);
-				tripBooking.setFromLocation(fromLocation);
-				tripBooking.setToLocation(toLocation);
-				tripBooking.setDistanceInKm(distanceInKm);
-				tripBooking.setStatus(TripStatus.CONFIRMED);
+		try {
+			Customer customer = customerRepository2.findById(customerId).get();
+			List<Driver> driverList = driverRepository2.findAll();
+			for (Driver driver : driverList) {
+				if (driver.getCab().getAvailable()) {
+					TripBooking tripBooking = new TripBooking();
+					tripBooking.setDriver(driver);
+					tripBooking.setCustomer(customer);
+					tripBooking.setFromLocation(fromLocation);
+					tripBooking.setToLocation(toLocation);
+					tripBooking.setDistanceInKm(distanceInKm);
+					tripBooking.setStatus(TripStatus.CONFIRMED);
 
-				driver.getCab().setAvailable(false);
+					driver.getCab().setAvailable(false);
 //				Cab cab = driver.getCab();
 //				cab.setDriver(driver);
-				customer.getTripBookingList().add(tripBooking);
-				driver.getTripBookingList().add(tripBooking);
+					customer.getTripBookingList().add(tripBooking);
+					driver.getTripBookingList().add(tripBooking);
 
-				customerRepository2.save(customer);
-				driverRepository2.save(driver);
-				tripBookingRepository2.save(tripBooking);
+					customerRepository2.save(customer);
+					driverRepository2.save(driver);
+					tripBookingRepository2.save(tripBooking);
 
-				return tripBooking;
+					return tripBooking;
+				}
 			}
 		}
-		throw new Exception("No cab available!");
+		catch (Exception e) {
+			throw new Exception("No cab available!");
+		}
+		return null;
 	}
 
 	@Override
