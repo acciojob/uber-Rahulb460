@@ -28,7 +28,7 @@ public class TripBooking {
     public TripBooking() {
     }
 
-    public int getTripBookingId() {
+    public Integer getTripBookingId() {
         return tripBookingId;
     }
 
